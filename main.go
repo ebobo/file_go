@@ -52,13 +52,16 @@ func main() {
 	data1 := []byte(stringMsg)
 
 	//ASCII for "hello" [104 101 108 108 111]10进制
-	fmt.Printf("ASCII Decimal: %v\n", data1)
+	fmt.Print(Info("ASCII Decimal: "))
+	fmt.Printf("%v\n", data1)
 
 	//ASCII to binary 2进制
-	fmt.Printf("Binary: %s\n", binary(stringMsg))
+	fmt.Print(Info("Binary:  "))
+	fmt.Printf("%s\n", binary(stringMsg))
 
 	//hex string 16进制， 16进制 比 10进制 更容易拆解成 2进制
 	hexString := hex.EncodeToString(data1[:])
+	fmt.Print(Info("Hex:  "))
 	fmt.Printf("%s\n", hexString)
 
 	//encode to base64 就是把8位的0和1 变成6位的
@@ -67,10 +70,12 @@ func main() {
 	//26 6 21 44 27 6 60
 	//a G v s b G 8 =
 	sEnc := base64.StdEncoding.EncodeToString(data1)
+	fmt.Print(Info("Encode Base64:  "))
 	fmt.Println(sEnc)
 
 	//decode from base64
 	sDec, _ := base64.StdEncoding.DecodeString(sEnc)
+	fmt.Print(Info("Decode Base64:  "))
 	fmt.Println(string(sDec))
 
 	//write to file
@@ -92,6 +97,8 @@ func main() {
 	checkNilErr(err)
 	fmt.Print(string(content))
 
+	// clean "temp" folder
+	clearDir("temp")
 }
 
 //clearDir
