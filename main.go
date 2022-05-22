@@ -9,8 +9,33 @@ import (
 	"path/filepath"
 )
 
+var (
+	Info = Teal
+	Warn = Yellow
+	Fata = Red
+)
+
+var (
+	Black   = Color("\033[1;30m%s\033[0m")
+	Red     = Color("\033[1;31m%s\033[0m")
+	Green   = Color("\033[1;32m%s\033[0m")
+	Yellow  = Color("\033[1;33m%s\033[0m")
+	Purple  = Color("\033[1;34m%s\033[0m")
+	Magenta = Color("\033[1;35m%s\033[0m")
+	Teal    = Color("\033[1;36m%s\033[0m")
+	White   = Color("\033[1;37m%s\033[0m")
+)
+
+func Color(colorString string) func(...interface{}) string {
+	sprint := func(args ...interface{}) string {
+		return fmt.Sprintf(colorString,
+			fmt.Sprint(args...))
+	}
+	return sprint
+}
+
 func main() {
-	fmt.Println("This is all about File")
+	fmt.Println(Warn("This is all about File"))
 
 	err := makeDirIfNotExist("temp")
 	checkNilErr(err)
@@ -20,12 +45,17 @@ func main() {
 
 	defer f.Close()
 
-	data1 := []byte("hello")
-	//ASCII for "hello" [104 101 108 108 111] 10进制
-	fmt.Printf("%v\n", data1)
+	stringMsg := "hello"
+	fmt.Print(Info("String: "))
+	fmt.Printf("%v\n", stringMsg)
+
+	data1 := []byte(stringMsg)
+
+	//ASCII for "hello" [104 101 108 108 111]10进制
+	fmt.Printf("ASCII Decimal: %v\n", data1)
 
 	//ASCII to binary 2进制
-	fmt.Printf("%s\n", binary("hello"))
+	fmt.Printf("Binary: %s\n", binary(stringMsg))
 
 	//hex string 16进制， 16进制 比 10进制 更容易拆解成 2进制
 	hexString := hex.EncodeToString(data1[:])
@@ -39,18 +69,28 @@ func main() {
 	sEnc := base64.StdEncoding.EncodeToString(data1)
 	fmt.Println(sEnc)
 
+	//decode from base64
+	sDec, _ := base64.StdEncoding.DecodeString(sEnc)
+	fmt.Println(string(sDec))
+
+	//write to file
 	n1, err := f.Write(data1)
 	checkNilErr(err)
 
 	fmt.Printf("wrote %d bytes\n", n1)
 
+	//we can also write string directly
+	n2, err := f.WriteString(" Qi\n")
+	checkNilErr(err)
+	fmt.Printf("wrote %d bytes\n", n2)
+
 	fi, _ := f.Stat()
+	fmt.Printf("file length %v bytes\n", fi.Size())
 
-	fmt.Printf("file length %v\n bytes", fi.Size())
-
-	// n, err := f.WriteString("data\n")
-	// checkNilErr(err)
-	// fmt.Printf("wrote %d bytes\n", n)
+	// read file
+	content, err := os.ReadFile("temp/data")
+	checkNilErr(err)
+	fmt.Print(string(content))
 
 }
 
